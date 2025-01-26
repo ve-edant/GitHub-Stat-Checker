@@ -3,6 +3,11 @@ import pandas as pd
 from datetime import datetime
 from github_stats import fetch_contribution_data, process_contribution_data
 
+st.set_page_config(
+    page_title="GitHub Stat Checker",
+    page_icon="🟢"
+)
+
 # Title and input
 st.title("GitHub Contribution Tracker")
 with st.container(border=True):
