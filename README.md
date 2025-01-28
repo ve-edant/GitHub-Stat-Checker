@@ -1,3 +1,5 @@
+![image](https://github.com/user-attachments/assets/b018c10a-db2b-4c56-9832-6cafda16ed1f)
+
 # GitHub Stat Checker
 
 GitHub Contribution Tracker is a **Streamlit** web application that visualizes GitHub user contributions with insightful metrics, charts, and achievements. This app uses the **GitHub GraphQL API** to fetch and display data about a user's contribution history, enabling users to track and analyze their growth.
