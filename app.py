@@ -33,13 +33,13 @@ if username and token and button_pressed:
             col1.metric(
                 "Total Contributions", 
                 value= f"{stats['total_contributions']} commits",
-                delta=f"{stats['highest_contribution']} Highest",
+                delta=f"Highest in a day: {stats['highest_contribution']} commits",
                 delta_color= "off" if stats['highest_contribution'] == 0 else "normal"
                 )
             col2.metric(
                 "Longest Streak", 
                 value= f"{stats['longest_streak']} days",
-                delta=f"{stats['current_streak']} Current",
+                delta=f"Current Streak: {stats['current_streak']} days",
                 delta_color= "off" if stats['current_streak'] == 0 else "normal"
                 )
 
@@ -67,7 +67,7 @@ if username and token and button_pressed:
         chart_data["Week"] = chart_data['Date'].dt.isocalendar().week
         chart_data["Day"] = chart_data['Date'].dt.dayofweek
 
-        heatmap_data = chart_data.pivot_table(index="Day", columns="Week", values="Contributions", aggfunc="sum", fill_value=0)
+        # heatmap_data = chart_data.pivot_table(index="Day", columns="Week", values="Contributions", aggfunc="sum", fill_value=0)
         # st.write("**Heatmap (Day of Week vs. Week of Year)**")
         # st.dataframe(heatmap_data, use_container_width=True)
 
