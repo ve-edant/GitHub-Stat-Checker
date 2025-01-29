@@ -34,7 +34,7 @@ if username and token and button_pressed:
                 "Total Contributions", 
                 value= f"{stats['total_contributions']} commits",
                 delta=f"{stats['highest_contribution']} Highest",
-                delta_color= "off" if stats['current_streak'] == 0 else "normal"
+                delta_color= "off" if stats['highest_contribution'] == 0 else "normal"
                 )
             col2.metric(
                 "Longest Streak", 
