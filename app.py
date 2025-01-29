@@ -59,7 +59,8 @@ if username and token and button_pressed:
         yearly_contributions = chart_data.groupby('Year')['Contributions'].sum()
 
         st.header("Yearly Growth")
-        st.bar_chart(yearly_contributions, color=color)
+        with st.container(border=True):
+            st.bar_chart(yearly_contributions, color=color)
 
         # Weekly Heatmap
         # st.header("Weekly Contribution Heatmap")
@@ -83,113 +84,117 @@ if username and token and button_pressed:
 
         # Weekday vs. Weekend Contributions
         st.header("Weekday vs. Weekend Contributions")
-        
-        chart_data['IsWeekend'] = chart_data['Date'].dt.dayofweek >= 5
-        weekend_data = chart_data.groupby('IsWeekend')['Contributions'].sum()
-        weekend_data.index = ["Weekdays", "Weekends"]
-        st.bar_chart(weekend_data, color=color, horizontal=True)
+        with st.container(border=True):
+            chart_data['IsWeekend'] = chart_data['Date'].dt.dayofweek >= 5
+            weekend_data = chart_data.groupby('IsWeekend')['Contributions'].sum()
+            weekend_data.index = ["Weekdays", "Weekends"]
+            st.bar_chart(weekend_data, color=color, horizontal=True)
 
         # Contribution Times Analysis (if available)
         st.header("Contributions by Day of Week")
-        day_of_week_data = chart_data.groupby("Day")['Contributions'].sum()
-        day_of_week_data.index = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-        st.bar_chart(day_of_week_data, color=color, horizontal=True)
+        with st.container(border=True):
+            day_of_week_data = chart_data.groupby("Day")['Contributions'].sum()
+            day_of_week_data.index = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            st.bar_chart(day_of_week_data, color=color, horizontal=True)
 
         # Custom Achievements
         st.header("Achievements")
-        if stats['current_streak'] <= 2:
-            st.markdown("🌱 **Streak Beginner**") 
-        elif stats['current_streak'] > 2 and stats['current_streak'] <= 7:
-            st.markdown("🌿 **Streak Novice**")
-        elif stats['current_streak'] > 7 and stats['current_streak'] <= 14:
-            st.markdown("🌳 **Streak Apprentice**") 
-        elif stats['current_streak'] > 14 and stats['current_streak'] <= 30:
-            st.markdown("⚔️ **Streak Journeyman**")
-        elif stats['current_streak'] > 30 and stats['current_streak'] <= 60:
-            st.markdown("🛡️ **Streak Expert**")
-        elif stats['current_streak'] > 60 and stats['current_streak'] <= 90:
-            st.markdown("🧙‍♂️ **Streak Master**")
-        elif stats['current_streak'] > 90:
-            st.markdown("🐉 **Streak Legend**") 
+        with st.container(border=True):
+            if stats['current_streak'] <= 2:
+                st.markdown("🌱 **Streak Beginner**") 
+            elif stats['current_streak'] > 2 and stats['current_streak'] <= 7:
+                st.markdown("🌿 **Streak Novice**")
+            elif stats['current_streak'] > 7 and stats['current_streak'] <= 14:
+                st.markdown("🌳 **Streak Apprentice**") 
+            elif stats['current_streak'] > 14 and stats['current_streak'] <= 30:
+                st.markdown("⚔️ **Streak Journeyman**")
+            elif stats['current_streak'] > 30 and stats['current_streak'] <= 60:
+                st.markdown("🛡️ **Streak Expert**")
+            elif stats['current_streak'] > 60 and stats['current_streak'] <= 90:
+                st.markdown("🧙‍♂️ **Streak Master**")
+            elif stats['current_streak'] > 90:
+                st.markdown("🐉 **Streak Legend**") 
 
-        
-        if stats['total_contributions'] < 50:
-            st.markdown("🌱 **Contributor**")
-        elif stats['total_contributions'] >= 50 and stats['total_contributions'] < 100:
-            st.markdown("🌿 **Regular Contributor**")
-        elif stats['total_contributions'] >= 100 and stats['total_contributions'] < 500:
-            st.markdown("🌳 **Active Contributor**")
-        elif stats['total_contributions'] >= 500 and stats['total_contributions'] < 1000:
-            st.markdown("⚔️ **Dedicated Contributor**")
-        elif stats['total_contributions'] >= 1000 and stats['total_contributions'] < 5000:
-            st.markdown("🛡️ **Seasoned Contributor**")
-        elif stats['total_contributions'] >= 5000:
-            st.markdown("🧙‍♂️ **GitHub Legend**")
+            
+            if stats['total_contributions'] < 50:
+                st.markdown("🌱 **Contributor**")
+            elif stats['total_contributions'] >= 50 and stats['total_contributions'] < 100:
+                st.markdown("🌿 **Regular Contributor**")
+            elif stats['total_contributions'] >= 100 and stats['total_contributions'] < 500:
+                st.markdown("🌳 **Active Contributor**")
+            elif stats['total_contributions'] >= 500 and stats['total_contributions'] < 1000:
+                st.markdown("⚔️ **Dedicated Contributor**")
+            elif stats['total_contributions'] >= 1000 and stats['total_contributions'] < 5000:
+                st.markdown("🛡️ **Seasoned Contributor**")
+            elif stats['total_contributions'] >= 5000:
+                st.markdown("🧙‍♂️ **GitHub Legend**")
 
-        st.write("Keep growing your GitHub stats and unlock more achievements!")
+            st.write("Keep growing your GitHub stats and unlock more achievements!")
 
         # Add Language Distribution
         st.header("Programming Languages")
         language_data = process_language_data(raw_data)
         
         if language_data:
-            # Sort languages by count and take top 6 languages
-            sorted_data = dict(sorted(language_data.items(), key=lambda x: x[1], reverse=True))
-            top_languages = dict(list(sorted_data.items())[:6])
-            
-            # Add "Others" category for remaining languages
-            remaining_languages = dict(list(sorted_data.items())[6:])
-            if remaining_languages:
-                others_count = sum(remaining_languages.values())
-                top_languages["Others"] = others_count
-            
-            # Create figure with fixed size
-            fig, ax = plt.subplots(figsize=(8, 8))
-            
-            # Calculate percentages
-            total = sum(sorted_data.values())
-            
-            # Get colors from the API response
-            colors = []
-            for lang in top_languages.keys():
-                if lang == "Others":
-                    colors.append('#808080')  # Gray for Others
-                else:
-                    # Find the color for this language in the raw data
-                    for edge in raw_data['data']['user']['repositories']['edges']:
-                        repo = edge['node']
-                        if repo['primaryLanguage'] and repo['primaryLanguage']['name'] == lang:
-                            colors.append(repo['primaryLanguage']['color'])
-                            break
+            with st.container(border=True):
+                col1, col2 = st.columns(2)
+                # Sort languages by count and take top 6 languages
+                sorted_data = dict(sorted(language_data.items(), key=lambda x: x[1], reverse=True))
+                top_languages = dict(list(sorted_data.items())[:6])
+                
+                # Add "Others" category for remaining languages
+                remaining_languages = dict(list(sorted_data.items())[6:])
+                if remaining_languages:
+                    others_count = sum(remaining_languages.values())
+                    top_languages["Others"] = others_count
+                
+                # Create figure with fixed size
+                fig, ax = plt.subplots(figsize=(8, 8))
+                
+                # Calculate percentages
+                total = sum(sorted_data.values())
+                
+                # Get colors from the API response
+                colors = []
+                for lang in top_languages.keys():
+                    if lang == "Others":
+                        colors.append('#808080')  # Gray for Others
                     else:
-                        colors.append('#808080')  # Fallback color if not found
-            
-            # Create pie chart
-            wedges, texts, autotexts = ax.pie(
-                top_languages.values(),
-                labels=top_languages.keys(),
-                autopct='%1.1f%%',
-                startangle=90,
-                colors=colors,
-                textprops={'color': 'white', 'fontsize': 12},
-                wedgeprops={'edgecolor': 'white', 'linewidth': 1}
-            )
-            
-            ax.axis('equal')
-            
-            # Make the figure background transparent
-            fig.patch.set_alpha(0.0)
-            ax.patch.set_alpha(0.0)
-            
-            st.pyplot(fig)
-            
-            # Display language breakdown in a table
-            st.markdown("#### Language Breakdown")
-            lang_df = pd.DataFrame({
-                "Language": top_languages.keys(),
-                "Repositories": top_languages.values(),
-                "Percentage": [f"{count/total:.1%}" for count in top_languages.values()]
-            })
-            st.dataframe(lang_df, hide_index=True)
+                        # Find the color for this language in the raw data
+                        for edge in raw_data['data']['user']['repositories']['edges']:
+                            repo = edge['node']
+                            if repo['primaryLanguage'] and repo['primaryLanguage']['name'] == lang:
+                                colors.append(repo['primaryLanguage']['color'])
+                                break
+                        else:
+                            colors.append('#808080')  # Fallback color if not found
+                
+                # Create pie chart
+                wedges, texts, autotexts = ax.pie(
+                    top_languages.values(),
+                    labels=top_languages.keys(),
+                    autopct='%1.1f%%',
+                    startangle=90,
+                    colors=colors,
+                    textprops={'color': 'white', 'fontsize': 12},
+                    wedgeprops={'edgecolor': 'white', 'linewidth': 1}
+                )
+                
+                ax.axis('equal')
+                
+                # Make the figure background transparent
+                fig.patch.set_alpha(0.0)
+                ax.patch.set_alpha(0.0)
+                
+                col2.pyplot(fig)
+                
+                # Display language breakdown in a table
+                col1.markdown("#### Language Breakdown")
+                lang_df = pd.DataFrame({
+                    "Language": top_languages.keys(),
+                    "Repositories": top_languages.values(),
+                    "Percentage": [f"{count/total:.1%}" for count in top_languages.values()]
+                })
+                col1.dataframe(lang_df, hide_index=True)
         else:
             st.warning("No language data available for the user's repositories.")
