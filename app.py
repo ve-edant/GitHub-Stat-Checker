@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from github_stats import fetch_contribution_data, process_contribution_data, process_language_data
+from github_stats import fetch_contribution_data, process_contribution_data, process_language_data, process_user_data
 import matplotlib.pyplot as plt
 
 st.set_page_config(
@@ -24,6 +24,32 @@ if username and token and button_pressed:
     if "errors" in raw_data:
         st.error("Error fetching data. Check your username/token.")
     else:
+        user_stats = process_user_data(raw_data)
+        formatted_date = datetime.strptime(user_stats['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime("%d-%m-%Y")
+        joined_since = user_stats.get("joined_since")
+        github_days = user_stats.get("github_days")
+        active_days = user_stats.get("active_days")
+        less_than_2_months_old = user_stats.get("less_than_2_months_old")
+        
+        st.header("User Stats")
+        with st.container():
+            col1, col2 = st.columns(2)
+            col1.metric(
+                label="Joined Github since",
+                value= formatted_date,
+                delta= joined_since,
+                delta_color= "inverse" if less_than_2_months_old else "normal",
+                border= True
+            )
+
+            col2.metric(
+                label="Total days on GitHub",
+                value= f"{github_days} days",
+                delta= f"Active for: {active_days} days",
+                delta_color= "off" if active_days < 7 else "normal",
+                border= True
+            )
+
         stats = process_contribution_data(raw_data)
 
         # Display summary metrics
