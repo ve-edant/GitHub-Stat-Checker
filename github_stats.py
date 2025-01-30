@@ -1,4 +1,6 @@
 import requests
+from datetime import datetime
+from util import format_duration, is_less_than_2_months_old
 
 def fetch_contribution_data(username, token):
     url = "https://api.github.com/graphql"
@@ -6,6 +8,7 @@ def fetch_contribution_data(username, token):
     query = f"""
     {{
         user(login: "{username}") {{
+            createdAt
             name
             contributionsCollection {{
                 totalCommitContributions
@@ -91,3 +94,27 @@ def process_language_data(data):
     except Exception as e:
         print(f"Error processing language data: {str(e)}")
         return None
+
+def process_user_data(data):
+    user_data = data.get("data", {}).get("user", {})
+    
+    # Calculate total GitHub days
+    created_at = user_data.get("createdAt")
+    less_than_2_months_old = is_less_than_2_months_old(created_at)
+    github_days = (datetime.now() - datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ")).days
+
+    joined_since = format_duration(created_at)
+
+    # Extract contribution days
+    weeks = user_data.get("contributionsCollection", {}).get("contributionCalendar", {}).get("weeks", [])
+    contribution_days = [day["date"] for week in weeks for day in week["contributionDays"] if day["contributionCount"] > 0]
+    
+    active_days = len(set(contribution_days))  # Unique active contribution days
+    
+    return {
+        "created_at": created_at,
+        "joined_since": joined_since,
+        "github_days": github_days,
+        "active_days": active_days,
+        "less_than_2_months_old": less_than_2_months_old
+    }
