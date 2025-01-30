@@ -25,7 +25,8 @@ if username and token and button_pressed:
         st.error("Error fetching data. Check your username/token.")
     else:
         user_stats = process_user_data(raw_data)
-        formatted_date = datetime.strptime(user_stats['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime("%d-%m-%Y")
+        formatted_date = user_stats.get("formatted_date")
+
         joined_since = user_stats.get("joined_since")
         github_days = user_stats.get("github_days")
         active_days = user_stats.get("active_days")

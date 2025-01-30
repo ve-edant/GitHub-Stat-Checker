@@ -24,3 +24,7 @@ def is_less_than_2_months_old(iso_date):
     created_date = datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%SZ")
     two_months_ago = datetime.now() - relativedelta(months=2)
     return created_date > two_months_ago
+
+def format_date(iso_date):
+    dt = datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%SZ")
+    return dt.strftime("%B {day}, %Y").replace("{day}", str(dt.day) + ("st" if dt.day in [1, 21, 31] else "nd" if dt.day == 2 else "rd" if dt.day == 3 else "th"))

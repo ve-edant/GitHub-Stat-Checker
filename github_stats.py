@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
-from util import format_duration, is_less_than_2_months_old
+from util import format_duration, is_less_than_2_months_old, format_date
+
 
 def fetch_contribution_data(username, token):
     url = "https://api.github.com/graphql"
@@ -100,6 +101,8 @@ def process_user_data(data):
     
     # Calculate total GitHub days
     created_at = user_data.get("createdAt")
+    formatted_date = format_date(user_data.get("createdAt")) 
+
     less_than_2_months_old = is_less_than_2_months_old(created_at)
     github_days = (datetime.now() - datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ")).days
 
@@ -113,6 +116,7 @@ def process_user_data(data):
     
     return {
         "created_at": created_at,
+        "formatted_date": formatted_date,
         "joined_since": joined_since,
         "github_days": github_days,
         "active_days": active_days,
