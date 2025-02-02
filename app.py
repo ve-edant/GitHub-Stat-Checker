@@ -72,26 +72,25 @@ if username and token and button_pressed:
 
         # Display summary metrics
         st.header("Summary Stats")
-        with st.container(border=True):
-            col1, col2, col3 = st.columns(3)
-            col1.metric(
-                "Total Contributions", 
-                value= f"{display_total:,} commits",  # Add thousands separator
-                delta=f"Public: {stats['public_contributions']:,}" + (f" | Private: {stats['private_contributions']:,}" if show_private else ""),
-                delta_color= "off" if display_total == 0 else "normal"
-                )
-            col2.metric(
-                "Longest Streak", 
-                value= f"{stats['longest_streak']} days",
-                delta=f"Current Streak: {stats['current_streak']} days",
-                delta_color= "off" if stats['current_streak'] == 0 else "normal"
-                )
-            col3.metric(
-                "Highest in a Day",
-                value= f"{stats['highest_contribution']} commits",
-                delta="Public" + (" + Private" if show_private else ""),
-                delta_color="off"
-                )
+        col1, col2, col3 = st.columns(3, border=True)
+        col1.metric(
+            "Total Contributions", 
+            value= f"{display_total:,} commits",  # Add thousands separator
+            delta=f"Public: {stats['public_contributions']:,}" + (f" | Private: {stats['private_contributions']:,}" if show_private else ""),
+            delta_color= "off" if display_total == 0 else "normal"
+            )
+        col2.metric(
+            "Longest Streak", 
+            value= f"{stats['longest_streak']} days",
+            delta=f"Current Streak: {stats['current_streak']} days",
+            delta_color= "off" if stats['current_streak'] == 0 else "normal"
+            )
+        col3.metric(
+            "Highest in a Day",
+            value= f"{stats['highest_contribution']} commits",
+            delta="Public" + (" + Private" if show_private else ""),
+            delta_color="normal"
+            )
 
         # Prepare data for visualizations
         days = stats.get("days", [])
@@ -179,38 +178,44 @@ if username and token and button_pressed:
             }
 
             # Display Streak Achievements
-            st.subheader("🔥 Streak Achievements")
-            current_streak = stats['current_streak']
-            
-            for title, details in streak_achievements.items():
-                progress = min(100, (current_streak / details["required"]) * 100)
-                if current_streak >= details["required"]:
-                    emoji = "✅"
-                    st.markdown(f"{emoji} **{title}** – {details['criteria']}")
-                else:
-                    emoji = "🔒"
-                    col1, col2 = st.columns([3, 1])
-                    col1.markdown(f"{emoji} **{title}** – {details['criteria']}")
-                    col2.markdown(f"Progress: {progress:.1f}%")
-                    if progress > 0:
-                        st.progress(progress / 100, text="")
+            with st.container(border=True):
+                st.subheader("🔥 Streak Achievements")
+                com_cont = st.container(border=False)
+                inc_exp = st.expander(label="Locked Achievements", icon="🔒")
+                current_streak = stats['current_streak']
+                
+                for title, details in streak_achievements.items():
+                    progress = min(100, (current_streak / details["required"]) * 100)
+                    if current_streak >= details["required"]:
+                        emoji = "✅"
+                        com_cont.markdown(f"{emoji} **{title}** – {details['criteria']}")
+                    else:
+                        emoji = "🔒"
+                        col1, col2 = inc_exp.columns([3, 1])
+                        col1.markdown(f"{emoji} **{title}** – {details['criteria']}")
+                        col2.markdown(f"Progress: {progress:.1f}%")
+                        if progress > 0:
+                            inc_exp.progress(progress / 100, text="")
 
             # Display Contribution Achievements
-            st.subheader("🏆 Contribution Achievements")
-            for title, details in contribution_achievements.items():
-                progress = min(100, (display_total / details["required"]) * 100)
-                if display_total >= details["required"]:
-                    emoji = "✅"
-                    st.markdown(f"{emoji} **{title}** – {details['criteria']}")
-                else:
-                    emoji = "🔒"
-                    col1, col2 = st.columns([3, 1])
-                    col1.markdown(f"{emoji} **{title}** – {details['criteria']}")
-                    col2.markdown(f"Progress: {progress:.1f}%")
-                    if progress > 0:
-                        st.progress(progress / 100, text="")
+            with st.container(border=True):
+                st.subheader("🏆 Contribution Achievements")
+                com_cont = st.container(border=False)
+                inc_exp = st.expander(label="Locked Achievements", icon="🔒")
+                for title, details in contribution_achievements.items():
+                    progress = min(100, (display_total / details["required"]) * 100)
+                    if display_total >= details["required"]:
+                        emoji = "✅"
+                        com_cont.markdown(f"{emoji} **{title}** – {details['criteria']}")
+                    else:
+                        emoji = "🔒"
+                        col1, col2 = inc_exp.columns([3, 1])
+                        col1.markdown(f"{emoji} **{title}** – {details['criteria']}")
+                        col2.markdown(f"Progress: {progress:.1f}%")
+                        if progress > 0:
+                            inc_exp.progress(progress / 100, text="")
 
-            st.info("Keep growing your GitHub stats to unlock more achievements! 🚀", icon="💪")
+            st.success("Keep growing your GitHub stats to unlock more achievements! 🚀", icon="💪")
 
         # Add Language Distribution
         st.header("Programming Languages")
