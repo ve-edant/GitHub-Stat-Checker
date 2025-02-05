@@ -2,29 +2,41 @@ import requests
 from datetime import datetime
 from util import format_duration, is_less_than_2_months_old, format_date
 
+BASE_URL = "https://api.github.com/graphql"
 
-def fetch_contribution_data(username, token):
-    url = "https://api.github.com/graphql"
+def fetch_user_data(username, token):
     headers = {"Authorization": f"Bearer {token}"}
     query = f"""
     {{
         user(login: "{username}") {{
             createdAt
             name
-            contributionsCollection {{
-                totalCommitContributions
-                restrictedContributionsCount
-                contributionCalendar {{
-                    totalContributions
-                    weeks {{
-                        contributionDays {{
-                            contributionCount
-                            date
-                        }}
-                    }}
-                }}
+            followers {{
+                totalCount
             }}
+            following {{
+                totalCount
+            }}
+            repositories(ownerAffiliations: OWNER, isFork: false){{
+                totalCount
+            }}
+        }}
+    }}
+    """
+    try:
+        response = requests.post(BASE_URL, json={"query": query}, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        return {"errors": str(e)}
+    
+def fetch_repo_data(username, token):
+    headers = {"Authorization": f"Bearer {token}"}
+    query = f"""
+    {{
+        user(login: "{username}") {{
             repositories(first: 100, ownerAffiliations: OWNER, isFork: false) {{
+                totalCount
                 edges {{
                     node {{
                         name
@@ -39,7 +51,37 @@ def fetch_contribution_data(username, token):
     }}
     """
     try:
-        response = requests.post(url, json={"query": query}, headers=headers)
+        response = requests.post(BASE_URL, json={"query": query}, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        return {"errors": str(e)}
+    
+
+def fetch_contribution_data(username, token):
+    headers = {"Authorization": f"Bearer {token}"}
+    query = f"""
+    {{
+        user(login: "{username}") {{
+            contributionsCollection {{
+                restrictedContributionsCount
+                totalPullRequestContributions
+                totalIssueContributions
+                contributionCalendar {{
+                    totalContributions
+                    weeks {{
+                        contributionDays {{
+                            contributionCount
+                            date
+                        }}
+                    }}
+                }}
+            }}
+        }}
+    }}
+    """
+    try:
+        response = requests.post(BASE_URL, json={"query": query}, headers=headers)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -83,6 +125,11 @@ def process_contribution_data(data):
             current_streak = 0
             longest_streak = 0
 
+        # Extract contribution days
+        weeks = calendar.get("weeks", [])
+        contribution_days = [day["date"] for week in weeks for day in week["contributionDays"] if day["contributionCount"] > 0]
+        active_days = len(set(contribution_days))  # Unique active contribution days
+
         return {
             "total_contributions": total_contributions,
             "public_contributions": public_contributions,
@@ -90,6 +137,7 @@ def process_contribution_data(data):
             "highest_contribution": highest_contribution,
             "current_streak": current_streak,
             "longest_streak": longest_streak,
+            "active_days": active_days,
             "days": days
         }
     except (KeyError, TypeError) as e:
@@ -107,28 +155,34 @@ def process_contribution_data(data):
 def process_language_data(data):
     """
     Process the language data from GitHub API response.
-    Returns a dictionary of languages and their usage counts.
+    Returns a dictionary of languages with their usage counts and colors.
     """
     try:
         # Get repositories from the user data
         repositories = data['data']['user']['repositories']['edges']
         
         # Process language data
-        language_counts = {}
+        language_data = {}
         
         for edge in repositories:
             repo = edge['node']
             if repo['primaryLanguage']:
                 language = repo['primaryLanguage']['name']
-                language_counts[language] = language_counts.get(language, 0) + 1
+                color = repo['primaryLanguage'].get('color', '#808080')  # Default to grey if no color
+
+                if language not in language_data:
+                    language_data[language] = {'count': 0, 'color': color}
+
+                language_data[language]['count'] += 1
         
-        return language_counts
+        return language_data
     except Exception as e:
         print(f"Error processing language data: {str(e)}")
         return None
 
+
 def process_user_data(data):
-    user_data = data.get("data", {}).get("user", {})
+    user_data = data['data']['user']
     
     # Calculate total GitHub days
     created_at = user_data.get("createdAt")
@@ -139,17 +193,10 @@ def process_user_data(data):
 
     joined_since = format_duration(created_at)
 
-    # Extract contribution days
-    weeks = user_data.get("contributionsCollection", {}).get("contributionCalendar", {}).get("weeks", [])
-    contribution_days = [day["date"] for week in weeks for day in week["contributionDays"] if day["contributionCount"] > 0]
-    
-    active_days = len(set(contribution_days))  # Unique active contribution days
-    
     return {
         "created_at": created_at,
         "formatted_date": formatted_date,
         "joined_since": joined_since,
         "github_days": github_days,
-        "active_days": active_days,
         "less_than_2_months_old": less_than_2_months_old
     }
