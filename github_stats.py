@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime
-from util import format_duration, is_less_than_2_months_old, format_date
+from util import format_duration, is_less_than_2_months_old, format_iso_date, format_date_ddmmyyyy
 
 BASE_URL = "https://api.github.com/graphql"
 
@@ -106,9 +106,12 @@ def process_contribution_data(data):
             
         # Calculate highest contribution
         try:
-            highest_contribution = max(day['contributionCount'] for day in days)
+            highest_day = max(days, key=lambda day: day['contributionCount'])
+            highest_contribution = highest_day['contributionCount']
+            highest_contribution_date = format_date_ddmmyyyy(highest_day['date'])
         except (ValueError, KeyError):
             highest_contribution = 0
+            highest_contribution_date = None
         
         current_streak = 0
         longest_streak = 0
@@ -135,6 +138,7 @@ def process_contribution_data(data):
             "public_contributions": public_contributions,
             "private_contributions": private_contributions,
             "highest_contribution": highest_contribution,
+            "highest_contribution_date": highest_contribution_date,
             "current_streak": current_streak,
             "longest_streak": longest_streak,
             "active_days": active_days,
@@ -186,7 +190,7 @@ def process_user_data(data):
     
     # Calculate total GitHub days
     created_at = user_data.get("createdAt")
-    formatted_date = format_date(user_data.get("createdAt")) 
+    formatted_date = format_iso_date(user_data.get("createdAt")) 
 
     less_than_2_months_old = is_less_than_2_months_old(created_at)
     github_days = (datetime.now() - datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ")).days
