@@ -22,17 +22,17 @@ def format_duration(iso_date):
 
 def format_date_ddmmyyyy(date):
     date_obj = datetime.strptime(date, '%Y-%m-%d')
-    formated_date = date_obj.strftime("%B {day}, %Y").replace("{day}", str(date_obj.day) + ("st" if date_obj.day in [1, 21, 31] else "nd" if date_obj.day == 2 else "rd" if date_obj.day == 3 else "th"))
+    formated_date = date_obj.strftime("{day} %b, %Y").replace("{day}", str(date_obj.day) + ("st" if date_obj.day in [1, 21, 31] else "nd" if date_obj.day == 2 else "rd" if date_obj.day == 3 else "th"))
     return formated_date
+
+def format_iso_date(iso_date):
+    dt = datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%SZ")
+    return dt.strftime("{day} %b, %Y").replace("{day}", str(dt.day) + ("st" if dt.day in [1, 21, 31] else "nd" if dt.day == 2 else "rd" if dt.day == 3 else "th"))
 
 def is_less_than_2_months_old(iso_date):
     created_date = datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%SZ")
     two_months_ago = datetime.now() - relativedelta(months=2)
     return created_date > two_months_ago
-
-def format_iso_date(iso_date):
-    dt = datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%SZ")
-    return dt.strftime("%B {day}, %Y").replace("{day}", str(dt.day) + ("st" if dt.day in [1, 21, 31] else "nd" if dt.day == 2 else "rd" if dt.day == 3 else "th"))
 
 def load_css() -> str:
     """
