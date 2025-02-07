@@ -4,7 +4,17 @@ from util import format_duration, is_less_than_2_months_old, format_iso_date, fo
 
 BASE_URL = "https://api.github.com/graphql"
 
-def fetch_user_data(username, token):
+def fetch_user_data(username: str, token: str):
+    """
+    Fetch user data from GitHub GraphQL API.
+
+    Args:
+        username (str): GitHub username.
+        token (str): GitHub personal access token.
+
+    Returns:
+        dict: JSON response from GitHub API containing user data or error message.
+    """
     headers = {"Authorization": f"Bearer {token}"}
     query = f"""
     {{
@@ -37,8 +47,18 @@ def fetch_user_data(username, token):
         return response.json()
     except requests.exceptions.RequestException as e:
         return {"errors": str(e)}
-    
-def fetch_repo_data(username, token):
+
+def fetch_repo_data(username: str, token: str):
+    """
+    Fetch repository data from GitHub GraphQL API.
+
+    Args:
+        username (str): GitHub username.
+        token (str): GitHub personal access token.
+
+    Returns:
+        dict: JSON response from GitHub API containing repository data or error message.
+    """
     headers = {"Authorization": f"Bearer {token}"}
     query = f"""
     {{
@@ -64,9 +84,18 @@ def fetch_repo_data(username, token):
         return response.json()
     except requests.exceptions.RequestException as e:
         return {"errors": str(e)}
-    
 
-def fetch_contribution_data(username, token):
+def fetch_contribution_data(username: str, token: str):
+    """
+    Fetch contribution data from GitHub GraphQL API.
+
+    Args:
+        username (str): GitHub username.
+        token (str): GitHub personal access token.
+
+    Returns:
+        dict: JSON response from GitHub API containing contribution data or error message.
+    """
     headers = {"Authorization": f"Bearer {token}"}
     query = f"""
     {{
@@ -95,7 +124,16 @@ def fetch_contribution_data(username, token):
     except requests.exceptions.RequestException as e:
         return {"errors": str(e)}
 
-def process_contribution_data(data):
+def process_contribution_data(data: dict):
+    """
+    Process the contribution data from GitHub API response.
+
+    Args:
+        data (dict): JSON response from GitHub API containing contribution data.
+
+    Returns:
+        dict: Processed contribution data including total contributions, highest contribution, streaks, and active days.
+    """
     try:
         contributions_collection = data['data']['user']['contributionsCollection']
         calendar = contributions_collection['contributionCalendar']
@@ -164,10 +202,15 @@ def process_contribution_data(data):
             "days": []
         }
 
-def process_language_data(data):
+def process_language_data(data: dict):
     """
     Process the language data from GitHub API response.
-    Returns a dictionary of languages with their usage counts and colors.
+
+    Args:
+        data (dict): JSON response from GitHub API containing repository data.
+
+    Returns:
+        dict: Dictionary of languages with their usage counts and colors.
     """
     try:
         # Get repositories from the user data
@@ -192,11 +235,15 @@ def process_language_data(data):
         print(f"Error processing language data: {str(e)}")
         return None
 
-
-def process_user_data(data):
+def process_user_data(data: dict):
     """
     Process the user data from GitHub API response.
-    Returns a dictionary of user info like username, bio, location, etc.
+
+    Args:
+        data (dict): JSON response from GitHub API containing user data.
+
+    Returns:
+        dict: Processed user data including name, bio, location, followers, following, repositories, and contributions.
     """
     try:
         user_data = data['data']['user']
