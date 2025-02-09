@@ -16,16 +16,17 @@ def main():
 
     # Title and input
     st.title("GitHub Contribution Tracker")
-    with st.container(border=True):
-        username = st.text_input("Enter GitHub Username:")
-        token = st.text_input("Enter GitHub Personal Access Token:", type="password", help="Help: [Create Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)")
-        show_private = st.toggle("Show Private Contributions", value=True, help="Toggle to show/hide private contributions in stats. Requires a token with 'repo' scope.")
+    with st.sidebar:
+        form = st.container(border=True)
+        username = form.text_input("Enter GitHub Username:")
+        token = form.text_input("Enter GitHub Personal Access Token:", type="password", help="Help: [Create Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)")
+        show_private = form.toggle("Show Private Contributions", value=True, help="Toggle to show/hide private contributions in stats. Requires a token with 'repo' scope.")
         
         # Add warning about token permissions if showing private contributions
         if show_private:
-            st.info("To view private contributions, make sure your token has the 'repo' scope enabled.", icon="ℹ️")
+            form.info("To view private contributions, make sure your token has the 'repo' scope enabled.", icon="ℹ️")
         
-        button_pressed = st.button("Track", type="primary")
+        button_pressed = form.button("Track", type="primary")
 
     
     if username and token and button_pressed:
@@ -314,6 +315,8 @@ def main():
                             col2.markdown(f"Progress: {progress:.1f}%")
                             if progress > 0:
                                 inc_exp.progress(progress / 100, text="")
+    else:
+        st.info("ℹ️ ***Enter your GitHub username and token in the sidebar to get started.***")
 
 
 if __name__ == "__main__":
