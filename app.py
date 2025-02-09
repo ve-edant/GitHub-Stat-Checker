@@ -12,7 +12,16 @@ def main():
     st.set_page_config(
         page_title = "GitHub Stat Checker",
         page_icon = "🟢",
-        layout = "wide"
+        layout = "wide",
+        menu_items={
+            "About": """
+            This is a Streamlit app that tracks your GitHub contributions and provides insights into your activity.  
+            Built by [:red[TheCarBun]](https://github.com/TheCarBun/) & [:red[Pakagronglb]](https://github.com/pakagronglb)  
+            GitHub: [:green[GitHub-Stats]](https://github.com/TheCarBun/GitHub-Stat-Checker)
+            """,
+            
+            "Report a bug": "https://github.com/TheCarBun/GitHub-Stat-Checker/issues",
+        }
     )
 
     # Title and input
