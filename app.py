@@ -318,14 +318,16 @@ def main():
                         progress = min(100, (current_streak / details["required"]) * 100)
                         if current_streak >= details["required"]:
                             emoji = "✅"
-                            com_cont.markdown(f"{emoji} **{title}** – {details['criteria']}")
+                            com_cont.markdown(f"{emoji} **:green[{title}]** : *{details['criteria']}*")
                         else:
                             emoji = "🔒"
-                            col1, col2 = inc_exp.columns([3, 1])
-                            col1.markdown(f"{emoji} **{title}** – {details['criteria']}")
-                            col2.markdown(f"Progress: {progress:.1f}%")
+                            col1, col2 = inc_exp.columns([2, 1])
+                            col1.markdown(f"{emoji} **:orange[{title}]**")
+                            col1.markdown(f"*{details['criteria']}*")
+                            col2.markdown(f"**Progress: :orange[:orange-background[{progress:.1f}%]]**")
                             if progress > 0:
-                                inc_exp.progress(progress / 100, text="")
+                                inc_exp.progress(progress / 100, text=f":blue[{current_streak}/{details['required']}]")
+                                inc_exp.divider()
 
                 # Display Contribution Achievements
                 with contr_cont.container(border=True):
@@ -336,14 +338,16 @@ def main():
                         progress = min(100, (total_contributions / details["required"]) * 100)
                         if total_contributions >= details["required"]:
                             emoji = "✅"
-                            com_cont.markdown(f"{emoji} **{title}** – {details['criteria']}")
+                            com_cont.markdown(f"{emoji} **:green[{title}]** : *{details['criteria']}*")
                         else:
                             emoji = "🔒"
-                            col1, col2 = inc_exp.columns([3, 1])
-                            col1.markdown(f"{emoji} **{title}** – {details['criteria']}")
-                            col2.markdown(f"Progress: {progress:.1f}%")
+                            col1, col2 = inc_exp.columns([2, 1])
+                            col1.markdown(f"{emoji} **:orange[{title}]**")
+                            col1.markdown(f"*{details['criteria']}*")
+                            col2.markdown(f"**Progress: :orange[:orange-background[{progress:.1f}%]]** ")
                             if progress > 0:
-                                inc_exp.progress(progress / 100, text="")
+                                inc_exp.progress(progress / 100, text=f":blue[{total_contributions}/{details['required']}]")
+                                inc_exp.divider()
     else:
         st.info("ℹ️ ***Enter your GitHub username and token in the sidebar to get started.***")
 
