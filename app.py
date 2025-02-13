@@ -11,7 +11,7 @@ color = "#26a641"
 def main():
     st.set_page_config(
         page_title = "GitHub Stat Checker",
-        page_icon = "🟢",
+        page_icon = "./static/icon.png",
         layout = "wide",
         menu_items={
             "About": """
@@ -147,7 +147,7 @@ def main():
                         delta_color= "off" if display_total == 0 else "normal"
                         )
                     col2.metric(
-                        "Longest Streak", 
+                        "🔥 Longest Streak", 
                         value= f"{longest_streak} days",
                         delta=f"Current Streak: {current_streak} days",
                         delta_color= "off" if current_streak == 0 else "normal"
