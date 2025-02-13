@@ -1,5 +1,5 @@
 import unittest
-from github_stats import process_language_data
+from process_github_data import process_language_data
 
 class TestGitHubStats(unittest.TestCase):
     def setUp(self):

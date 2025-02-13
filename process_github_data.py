@@ -1,128 +1,5 @@
-import requests
 from datetime import datetime
 from util import format_duration, is_less_than_2_months_old, format_iso_date, format_date_ddmmyyyy
-
-BASE_URL = "https://api.github.com/graphql"
-
-def fetch_user_data(username: str, token: str):
-    """
-    Fetch user data from GitHub GraphQL API.
-
-    Args:
-        username (str): GitHub username.
-        token (str): GitHub personal access token.
-
-    Returns:
-        dict: JSON response from GitHub API containing user data or error message.
-    """
-    headers = {"Authorization": f"Bearer {token}"}
-    query = f"""
-    {{
-        user(login: "{username}") {{
-            name
-            bio
-            location
-            createdAt
-            avatarUrl
-            followers {{
-                totalCount
-            }}
-            following {{
-                totalCount
-            }}
-            repositories(ownerAffiliations: OWNER, isFork: false){{
-                totalCount
-            }}
-            contributionsCollection {{
-                totalCommitContributions
-                totalPullRequestContributions
-                totalIssueContributions
-                }}
-        }}
-    }}
-    """
-    try:
-        response = requests.post(BASE_URL, json={"query": query}, headers=headers)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        return {"errors": str(e)}
-
-def fetch_repo_data(username: str, token: str):
-    """
-    Fetch repository data from GitHub GraphQL API.
-
-    Args:
-        username (str): GitHub username.
-        token (str): GitHub personal access token.
-
-    Returns:
-        dict: JSON response from GitHub API containing repository data or error message.
-    """
-    headers = {"Authorization": f"Bearer {token}"}
-    query = f"""
-    {{
-        user(login: "{username}") {{
-            repositories(first: 100, ownerAffiliations: OWNER, isFork: false) {{
-                totalCount
-                edges {{
-                    node {{
-                        name
-                        primaryLanguage {{
-                            name
-                            color
-                        }}
-                    }}
-                }}
-            }}
-        }}
-    }}
-    """
-    try:
-        response = requests.post(BASE_URL, json={"query": query}, headers=headers)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        return {"errors": str(e)}
-
-def fetch_contribution_data(username: str, token: str):
-    """
-    Fetch contribution data from GitHub GraphQL API.
-
-    Args:
-        username (str): GitHub username.
-        token (str): GitHub personal access token.
-
-    Returns:
-        dict: JSON response from GitHub API containing contribution data or error message.
-    """
-    headers = {"Authorization": f"Bearer {token}"}
-    query = f"""
-    {{
-        user(login: "{username}") {{
-            contributionsCollection {{
-                restrictedContributionsCount
-                totalPullRequestContributions
-                totalIssueContributions
-                contributionCalendar {{
-                    totalContributions
-                    weeks {{
-                        contributionDays {{
-                            contributionCount
-                            date
-                        }}
-                    }}
-                }}
-            }}
-        }}
-    }}
-    """
-    try:
-        response = requests.post(BASE_URL, json={"query": query}, headers=headers)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        return {"errors": str(e)}
 
 def process_contribution_data(data: dict):
     """
@@ -279,3 +156,31 @@ def process_user_data(data: dict):
         return {
             "errors": str(e)
         }
+    
+   
+def analyze_contributions(data):
+    """Analyzes GitHub contribution data and provides key insights."""
+    if not data:
+        return None
+
+    try:
+        contributions = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
+        
+        total_contributions = sum(
+            day["contributionCount"] for week in contributions for day in week["contributionDays"]
+        )
+        total_days = sum(1 for week in contributions for day in week["contributionDays"])
+
+        contribution_rate = total_contributions / total_days  # Contributions per day
+
+        active_days = sum(1 for week in contributions for day in week["contributionDays"] if day["contributionCount"] > 0)
+
+        return {
+            "total_contributions": total_contributions,
+            "total_days": total_days,
+            "active_days": active_days,
+            "contribution_rate": round(contribution_rate, 2)
+        }
+    except Exception as e:
+        print(f"Error processing contribution data: {str(e)}")
+        return {"errors": str(e)}
