@@ -130,7 +130,7 @@ def main():
             
                     # Validate contribution data
                     if public_contributions == 0 and private_contributions == 0:
-                        st.warning("No contributions found. If you have private repositories, make sure your token has the 'repo' scope.", 0)
+                        st.warning("No contributions found. If you have private repositories, make sure your token has the 'repo' scope.")
                 
                     # Calculate contributions based on toggle
                     display_total = public_contributions
