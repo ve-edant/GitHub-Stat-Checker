@@ -1,39 +1,64 @@
 ![image](https://github.com/user-attachments/assets/b018c10a-db2b-4c56-9832-6cafda16ed1f)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/TheCarBun/GitHub-Stat-Checker?style=for-the-badge) 
+![GitHub last commit](https://img.shields.io/github/last-commit/TheCarBun/GitHub-Stat-Checker?style=for-the-badge)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-raw/TheCarBun/GitHub-Stat-Checker?style=for-the-badge) 
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-raw/TheCarBun/GitHub-Stat-Checker?style=for-the-badge) 
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-closed-raw/TheCarBun/GitHub-Stat-Checker?style=for-the-badge) 
+![GitHub last commit](https://img.shields.io/github/last-commit/TheCarBun/GitHub-Stat-Checker?style=for-the-badge)
+
 
 # GitHub Stat Checker
 
 GitHub Contribution Tracker is a **Streamlit** web application that visualizes GitHub user contributions with insightful metrics, charts, and achievements. This app uses the **GitHub GraphQL API** to fetch and display data about a user's contribution history, enabling users to track and analyze their growth.
 
+**ℹ️  _Now predicts user contribution over a year using previous year's contribution data_**
+
 ## Features
+<details>
+<summary><b>User Stats Overview</b></summary><br>
 
-- **Summary Stats**:
-
-  - Total contributions across all repositories.
-  - Highest contributions in a single day.
+- **User Stats**:
+  - Total contributions across all repositories _(Now shows no. of private and public commits)_.
+  - Highest contributions in a single day _(Now shows date)_.
   - Current streak of consecutive contribution days.
   - Longest streak of consecutive contribution days.
+  - GitHub joining date, total no. of days on GitHub and no. of active days.
+
+- **Yearly Growth Stats**:
+  - Total contribution in previous year
+  - Rate of contribution
+  - No. of activate days
+  - Percentage of days active in the year
+  - Same for current year for comparison
 
 - **Visualizations**:
-
   - **Contributions Over Time**: A line chart showing daily contributions.
   - **Yearly Growth**: A bar chart summarizing contributions year by year.
-  - **Weekly Contribution Heatmap**: An interactive table visualizing contributions by the day of the week and week of the year.
   - **Day-of-Week Analysis**: Contributions grouped by the day of the week.
   - **Weekday vs. Weekend Contributions**: A bar chart comparing contributions made on weekdays versus weekends.
-
-- **Custom Metrics**:
-
-  - Most productive day: Displays the date with the highest contributions.
-  - Contribution streaks: Real-time updates of current and longest streaks.
+  - **Programming Languages**: Pie chart and a table showing which programming languages are used and in how many repos
 
 - **Achievements**:
-
-  - Dynamic achievements unlocked based on contribution activity, such as:
+  - Dynamic achievements unlocked based on contribution and streak activity, such as:
     - **"🔥 Streak Warrior"**: A streak of over 30 days.
     - **"💪 Commit Master"**: Total contributions exceeding 1000.
 
-- **Language Usage (upcoming)**:
-  - Extendable with GitHub API to display language usage stats for repositories.
+</details>
+
+<details>
+<summary><b>User Contribution Predictions</b></summary><br>
+
+- **Predictions & Trends**:
+  - **Contribution Rate Growth**: Growth in contribution rate compared to last year
+  - **Predicted Contributions This Year**: Total predicted commits this year, if user continues to contribute at the same rate
+  - **Predicted Active Days This Year**: Total predicted active days this year, if user continues to contribute at the same rate
+- **Milestone Estimations**:
+  
+  Predicts for milestones `[100, 500, 1000, 2000, 5000, 10000]` contributions:
+  - Number of days required to achive commit milestones
+  - Date on which milestone will be achieved
+</details>
+
 
 ## Installation
 
@@ -97,24 +122,25 @@ github-contribution-tracker/
 
 ### Future Improvements
 
-- Add more dynamic achievements.
+- Add achievements in form of badges.
 - Include repository-specific stats (e.g., most active repositories).
 - Display contributions grouped by month.
 - Add user rankings for team or organization collaboration.
-- Add language usage data.
 
 ## Screenshots
 
 <details>
 <summary><b>Click to View Images 📷</b></summary><br>
 
-![image](https://github.com/user-attachments/assets/f8d8ede2-40ea-493a-9c50-ba043492c8be)
+![image](https://github.com/user-attachments/assets/4691bbb4-f544-4ac4-8fda-f1734d4f80e1)
 
-![image](https://github.com/user-attachments/assets/c8883411-8afe-403b-bad2-300897bba48d)
+![image](https://github.com/user-attachments/assets/b8c13eba-3218-4515-8e86-23d11b34310d)
 
-![image](https://github.com/user-attachments/assets/a18e3d50-29e9-43a7-91ad-30413c4039e4)
+![image](https://github.com/user-attachments/assets/e570ccd1-7b26-4c21-9649-28f0b15234df)
 
-![image](https://github.com/user-attachments/assets/3e87ffb6-30b5-40ee-b1bd-50c1c63ff465)
+![image](https://github.com/user-attachments/assets/4d00a782-73ae-4051-afd9-b236831a4b24)
+
+![image](https://github.com/user-attachments/assets/c221c971-c944-4c7c-8058-2b1e3afcf9c1)
 
 </details>
 
