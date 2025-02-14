@@ -1,10 +1,11 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from github_stats import *
+from process_github_data import *
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from util import load_css
+from fetch_github_data import *
 
 color = "#26a641"
 
@@ -37,6 +38,20 @@ def main():
             form.info("To view private contributions, make sure your token has the 'repo' scope enabled.", icon="ℹ️")
         
         button_pressed = form.button("Track", type="primary")
+
+        with st.container(border=True):
+            st.page_link(
+                "app.py", 
+                label="Overview", 
+                icon="✨",
+                help="ℹ️ Check your GitHub stats and contributions."
+                )
+            st.page_link(
+                "./pages/predictions.py", 
+                label="Predictions", 
+                icon="⚡",
+                help="ℹ️ Predict your GitHub contributions."
+                )
 
     
     if username and token and button_pressed:
@@ -129,7 +144,7 @@ def main():
             
                     # Validate contribution data
                     if public_contributions == 0 and private_contributions == 0:
-                        st.warning("No contributions found. If you have private repositories, make sure your token has the 'repo' scope.", 0)
+                        st.warning("No contributions found. If you have private repositories, make sure your token has the 'repo' scope.")
                 
                     # Calculate contributions based on toggle
                     display_total = public_contributions
@@ -184,6 +199,84 @@ def main():
 
                 st.markdown("### Growth and Statistics")
                 with st.container():
+                    # Fetch data
+                    today = datetime.now().strftime("%Y-%m-%d")
+                    current_jan1st = datetime(datetime.now().year, 1, 1).strftime("%Y-%m-%d")
+                    last_jan1st = datetime(datetime.now().year-1, 1, 1).strftime("%Y-%m-%d")
+                    last_dedc31st = datetime(datetime.now().year-1, 12, 31).strftime("%Y-%m-%d")
+
+                    year_data = fetch_data_for_duration(
+                        username, 
+                        token,
+                        from_date= last_jan1st,
+                        to_date= last_dedc31st
+                        )
+
+                    current_year_data = fetch_data_for_duration(
+                        username, 
+                        token,
+                        from_date= current_jan1st,
+                        to_date= today
+                        )
+                    
+                    # Process data
+                    whole_year_stats = analyze_contributions(year_data)
+                    current_year_stats = analyze_contributions(current_year_data)
+
+                    
+                    
+                    with st.container(border=True):
+                        # --- 365 days stats ---
+                        total_contributions_ly = whole_year_stats.get('total_contributions')
+                        total_days_ly = whole_year_stats.get('total_days')
+                        contribution_rate_ly = whole_year_stats.get('contribution_rate')
+                        active_days_ly = whole_year_stats.get('active_days')
+                        percent_active_days_ly = (whole_year_stats.get('active_days')/total_days_ly)*100
+
+                        st.markdown(f"#### :material/calendar_month: **Last year contributions({datetime.now().year-1}):**")
+                        col1, col2 = st.columns(2)
+                        col1.metric(
+                            label="Total Contributions", 
+                            value=f"{total_contributions_ly} commits",
+                            delta=f"{contribution_rate_ly:.2f} contributions/day",
+                            delta_color="inverse" if contribution_rate_ly < 1 else "normal",
+                            border=True
+                            )
+                        
+                        col2.metric(
+                            label="Active Days", 
+                            value=f"{active_days_ly} days",
+                            delta=f"{percent_active_days_ly:.1f}% days active",
+                            delta_color="inverse" if percent_active_days_ly < 8 else "normal",
+                            border=True
+                            )
+                        
+                        # --- Current year stats ---
+                        total_contributions = current_year_stats.get('total_contributions')
+                        total_days = current_year_stats.get('total_days')
+                        contribution_rate = current_year_stats.get('contribution_rate')
+                        active_days = current_year_stats.get('active_days')
+                        percent_active_days = (current_year_stats.get('active_days')/total_days)*100
+
+                        st.markdown(f"#### :material/calendar_today: **Contributions in current year({datetime.now().year}):**")
+                        col1, col2 = st.columns(2)
+                        col1.metric(
+                            label="Total Contributions", 
+                            value=f"{total_contributions} commits",
+                            delta=f"{contribution_rate:.2f} contributions/day",
+                            delta_color="inverse" if contribution_rate < 1 else "normal",
+                            border=True
+                            )
+                        
+                        col2.metric(
+                            label="Active Days", 
+                            value=f"{active_days}/{total_days} days",
+                            delta=f"{percent_active_days:.1f}% days active",
+                            delta_color="inverse" if percent_active_days < 8 else "normal",
+                            border=True
+                            )
+
+                    st.markdown("### Visualizations:")
                     col1, col2 = st.columns(2, border=True, vertical_alignment="center")
 
                     col1.markdown("### Yearly Growth")
