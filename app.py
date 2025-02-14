@@ -28,6 +28,13 @@ def main():
     # Title and input
     st.title("GitHub Contribution Tracker")
     with st.sidebar:
+        # with st.expander("❓ How to Use This Tool"):
+        #     st.write("""
+        #     This tool analyzes your GitHub activity and predicts future contributions.
+        #     - Enter your GitHub username.
+        #     - View your stats and predictions.
+        #     - Export the data for further analysis.
+        #     """)
         form = st.container(border=True)
         username = form.text_input("Enter GitHub Username:")
         token = form.text_input("Enter GitHub Personal Access Token:", type="password", help="Help: [Create Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)")
@@ -432,6 +439,7 @@ def main():
                                 inc_exp.divider()
 
                 # Display Contribution Achievements
+                total_contributions = cont_stats.get("total_contributions", 0)
                 with contr_cont.container(border=True):
                     st.subheader("🏆 Contribution Achievements")
                     com_cont = st.container(border=False)
