@@ -1,7 +1,9 @@
 import requests
+import streamlit as st
 
 BASE_URL = "https://api.github.com/graphql"
 
+@st.cache_data(ttl=600)
 def fetch_data_for_duration(username: str, token: str, from_date: str, to_date: str):
     """
     Fetch user data from GitHub GraphQL API.
@@ -42,7 +44,8 @@ def fetch_data_for_duration(username: str, token: str, from_date: str, to_date: 
         return response.json()
     except requests.exceptions.RequestException as e:
         return {"errors": str(e)}
-    
+
+@st.cache_data(ttl=600)    
 def fetch_user_data(username: str, token: str):
     """
     Fetch user data from GitHub GraphQL API.
@@ -87,6 +90,7 @@ def fetch_user_data(username: str, token: str):
     except requests.exceptions.RequestException as e:
         return {"errors": str(e)}
 
+@st.cache_data(ttl=600)
 def fetch_repo_data(username: str, token: str):
     """
     Fetch repository data from GitHub GraphQL API.
@@ -124,6 +128,7 @@ def fetch_repo_data(username: str, token: str):
     except requests.exceptions.RequestException as e:
         return {"errors": str(e)}
 
+@st.cache_data(ttl=600)
 def fetch_contribution_data(username: str, token: str):
     """
     Fetch contribution data from GitHub GraphQL API.
