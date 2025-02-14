@@ -108,30 +108,7 @@ def main():
                             """, unsafe_allow_html=True)
 
                 with user_stats_info:
-                    formatted_date = user_stats.get("formatted_date")
-                    joined_since = user_stats.get("joined_since")
-                    github_days = user_stats.get("github_days")
-                    active_days = cont_stats.get("active_days")
-                    less_than_2_months_old = user_stats.get("less_than_2_months_old")
-            
-            
-                    col1, col2 = st.columns(2, border=True, vertical_alignment="center")
-                    col1.metric(
-                        label="Joined Github since",
-                        value= formatted_date,
-                        delta= joined_since,
-                        delta_color= "inverse" if less_than_2_months_old else "normal"
-                    )
-
-                    col2.metric(
-                        label="Total days on GitHub",
-                        value= f"{github_days} days",
-                        delta= f"Active for: {active_days} days",
-                        delta_color= "off" if active_days < 7 else "normal"
-                    )
-
                     # --- Summary Stats ---
-                    # st.markdown("### Summary Stats")
                     total_contributions = cont_stats.get("total_contributions", 0)
                     public_contributions = cont_stats.get("public_contributions", 0)
                     private_contributions = cont_stats.get("private_contributions", 0)
@@ -173,6 +150,31 @@ def main():
                         delta=f"{highest_contribution_date}",
                         delta_color="normal"
                         )
+                    
+                    # Days on GitHub & Active days
+                    formatted_date = user_stats.get("formatted_date")
+                    joined_since = user_stats.get("joined_since")
+                    github_days = user_stats.get("github_days")
+                    active_days = cont_stats.get("active_days")
+                    less_than_2_months_old = user_stats.get("less_than_2_months_old")
+            
+            
+                    col1, col2 = st.columns(2, border=True, vertical_alignment="center")
+                    col1.metric(
+                        label="Joined Github since",
+                        value= formatted_date,
+                        delta= joined_since,
+                        delta_color= "inverse" if less_than_2_months_old else "normal"
+                    )
+
+                    col2.metric(
+                        label="Total days on GitHub",
+                        value= f"{github_days} days",
+                        delta= f"Active for: {active_days} days",
+                        delta_color= "off" if active_days < 7 else "normal"
+                    )
+
+                    
 
             # Prepare data for visualizations
             if not days:
