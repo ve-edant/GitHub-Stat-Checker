@@ -1,10 +1,13 @@
 ![image](https://github.com/user-attachments/assets/b018c10a-db2b-4c56-9832-6cafda16ed1f)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/TheCarBun/GitHub-Stat-Checker?style=for-the-badge) 
-![GitHub last commit](https://img.shields.io/github/last-commit/TheCarBun/GitHub-Stat-Checker?style=for-the-badge)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-raw/TheCarBun/GitHub-Stat-Checker?style=for-the-badge) 
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-raw/TheCarBun/GitHub-Stat-Checker?style=for-the-badge) 
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-closed-raw/TheCarBun/GitHub-Stat-Checker?style=for-the-badge) 
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr-closed-raw/TheCarBun/GitHub-Stat-Checker?style=for-the-badge)
 ![GitHub last commit](https://img.shields.io/github/last-commit/TheCarBun/GitHub-Stat-Checker?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/TheCarBun/GitHub-Stat-Checker?style=for-the-badge)
+![GitHub Repo stars](https://img.shields.io/github/stars/TheCarBun/GitHub-Stat-Checker?style=for-the-badge)
+
 
 
 # GitHub Stat Checker
